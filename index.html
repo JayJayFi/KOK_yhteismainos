@@ -110,7 +110,7 @@
 <button id="refresh-button" class="refresh-button">Refresh Data</button>
 <div class="info-button" title="Show Information" onclick="toggleInfo()">i</div>
 <div class="debug-button" title="Show Debug Console" onclick="toggleConsole()">D</div>
-<div class="data-source">Data source: Google Drive</div>
+<div class="data-source">Data source: <span id="data-source">Loading...</span></div>
 
 <!-- Console panel for debugging -->
 <div id="console-panel" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 200px; background: rgba(0,0,0,0.8); color: white; overflow: auto; padding: 10px; font-family: monospace; z-index: 1000;">
@@ -153,6 +153,14 @@ console.warn = function() {
   consoleOutput.innerHTML += `<div style="color: #ffd166;">[WARN] ${message}</div>`;
 };
 
+// Detect if running from file system or web server
+const isLocalFile = window.location.protocol === 'file:';
+
+// Update data source indicator
+document.getElementById('data-source').textContent = isLocalFile ? 
+  "Embedded data (CSV fetching works when uploaded to web server)" : 
+  "Local CSV file (map.csv)";
+
 // Toggle console with button
 function toggleConsole() {
   const panel = document.getElementById('console-panel');
@@ -172,7 +180,16 @@ function toggleInfo() {
   infoPopup.style = 'position: fixed; top: 50px; right: 10px; background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1000; max-width: 300px;';
   infoPopup.innerHTML = `
     <h3>Area Map with Jakajat</h3>
-    <p>Use the D button to show debug information if you encounter issues.</p>
+    <p>This map shows areas assigned to different "jakajat" (distributors).</p>
+    <p>Areas are color-coded based on the assigned jakaja.</p>
+    <p>Click on an area to see details.</p>
+    <p>To update the map with new data:</p>
+    <ol>
+      <li>Update the "map.csv" file</li>
+      <li>Click the "Refresh Data" button</li>
+    </ol>
+    <p><strong>Note:</strong> When viewing locally, the embedded data is used. 
+    When uploaded to a web server, the map will fetch updates from "map.csv".</p>
     <button onclick="toggleInfo()" style="background: #3388ff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Close</button>
   `;
   document.body.appendChild(infoPopup);
