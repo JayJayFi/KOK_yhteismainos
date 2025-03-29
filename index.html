@@ -35,39 +35,43 @@
       border-radius: 3px;
       box-shadow: 0 1px 5px rgba(0,0,0,0.4);
     }
-    .info { 
-      padding: 4px 6px; 
-      font: 10px/12px Arial, Helvetica, sans-serif; 
-      background: white; 
-      background: rgba(255,255,255,0.8); 
-      box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-      border-radius: 5px; 
-    }
-    .legend { 
-      text-align: left;
-      line-height: 14px;
-      color: #555;
-      max-width: 180px;
-      max-height: 250px;
+    /* Custom legend style */
+    .custom-legend {
+      position: fixed;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: white;
+      background: rgba(255,255,255,0.8);
+      padding: 6px;
+      border-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+      z-index: 1000;
+      max-width: 120px;
+      max-height: 80vh;
       overflow-y: auto;
+      font-size: 9px;
     }
-    .legend i { 
-      width: 10px; 
-      height: 10px; 
-      float: left; 
-      margin-right: 4px; 
-      opacity: 0.7; 
-    }
-    .legend h4 {
-      margin: 0 0 3px 0;
-      font-size: 11px;
+    .custom-legend h4 {
+      margin: 0 0 4px 0;
+      font-size: 10px;
+      text-align: center;
     }
     .legend-item {
       margin-bottom: 2px;
-      font-size: 9px;
+      font-size: 8px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+    }
+    .color-box {
+      width: 8px;
+      height: 8px;
+      display: inline-block;
+      margin-right: 3px;
+      flex-shrink: 0;
     }
     .location-indicator {
       position: fixed;
@@ -81,14 +85,14 @@
       font-size: 10px;
     }
     @media (max-width: 600px) {
-      .legend {
-        max-width: 120px;
-        max-height: 160px;
-      }
-      .legend-item {
+      .custom-legend {
+        max-width: 100px;
         font-size: 8px;
       }
-      .legend h4 {
+      .legend-item {
+        font-size: 7px;
+      }
+      .custom-legend h4 {
         font-size: 9px;
       }
     }
@@ -97,6 +101,10 @@
 <body>
   <div id="location-indicator" class="location-indicator">Location found</div>
   <div id="map"></div>
+  <div id="legend" class="custom-legend">
+    <h4>Jakajat</h4>
+    <div id="legend-content"></div>
+  </div>
 
   <script>
     // GeoJSON data
@@ -204,17 +212,6 @@
       updateLegend(colorMap);
     }
 
-    // Add a legend to the map
-    const legend = L.control({position: 'centerright'});
-
-    legend.onAdd = function(map) {
-      const div = L.DomUtil.create('div', 'info legend');
-      div.innerHTML = '<h4>Jakajat</h4><div id="legend-content"></div>';
-      return div;
-    };
-
-    legend.addTo(map);
-
     // Function to update the legend with colors and names
     function updateLegend(colorMap) {
       const legendDiv = document.getElementById('legend-content');
@@ -232,9 +229,7 @@
       sortedKeys.forEach(function(name) {
         if (name === "Not assigned") return; // Skip "Not assigned" to save space
         const color = colorMap[name];
-        html += 
-          `<div class="legend-item"><span style="background:${color}; width:10px; height:10px; display:inline-block; margin-right:2px;"></span>` +
-          `${name}</div>`;
+        html += `<div class="legend-item"><div class="color-box" style="background:${color};"></div>${name}</div>`;
       });
 
       legendDiv.innerHTML = html;
