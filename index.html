@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Area Map with Jakajat</title>
+  <title>Area Map</title>
 
   <!-- Leaflet CSS and JavaScript -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" 
@@ -36,8 +36,8 @@
       box-shadow: 0 1px 5px rgba(0,0,0,0.4);
     }
     .info { 
-      padding: 6px 8px; 
-      font: 12px/14px Arial, Helvetica, sans-serif; 
+      padding: 4px 6px; 
+      font: 10px/12px Arial, Helvetica, sans-serif; 
       background: white; 
       background: rgba(255,255,255,0.8); 
       box-shadow: 0 0 15px rgba(0,0,0,0.2); 
@@ -45,69 +45,29 @@
     }
     .legend { 
       text-align: left;
-      line-height: 16px;
+      line-height: 14px;
       color: #555;
-      max-width: 220px;
-      max-height: 300px;
+      max-width: 180px;
+      max-height: 250px;
       overflow-y: auto;
     }
     .legend i { 
-      width: 16px; 
-      height: 16px; 
+      width: 10px; 
+      height: 10px; 
       float: left; 
-      margin-right: 6px; 
+      margin-right: 4px; 
       opacity: 0.7; 
     }
     .legend h4 {
-      margin: 0 0 5px 0;
-      font-size: 13px;
+      margin: 0 0 3px 0;
+      font-size: 11px;
     }
     .legend-item {
-      margin-bottom: 3px;
-      font-size: 11px;
+      margin-bottom: 2px;
+      font-size: 9px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-    .controls {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    .refresh-button {
-      background: #4a90e2;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 8px;
-      font-size: 12px;
-    }
-    .data-source {
-      background: rgba(255, 255, 255, 0.8);
-      padding: 5px 8px;
-      border-radius: 3px;
-      font-size: 10px;
-      text-align: right;
-    }
-    .auto-refresh {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 5px 8px;
-      border-radius: 3px;
-      font-size: 10px;
-    }
-    .auto-refresh label {
-      margin-right: 5px;
-      white-space: nowrap;
     }
     .location-indicator {
       position: fixed;
@@ -120,17 +80,21 @@
       border-radius: 3px;
       font-size: 10px;
     }
+    @media (max-width: 600px) {
+      .legend {
+        max-width: 120px;
+        max-height: 160px;
+      }
+      .legend-item {
+        font-size: 8px;
+      }
+      .legend h4 {
+        font-size: 9px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="controls">
-    <button id="refresh-button" class="refresh-button">Refresh Data</button>
-    <div class="auto-refresh">
-      <label for="auto-refresh">Auto-refresh:</label>
-      <input type="checkbox" id="auto-refresh" checked>
-    </div>
-    <div id="data-source" class="data-source">Data source: Embedded</div>
-  </div>
   <div id="location-indicator" class="location-indicator">Location found</div>
   <div id="map"></div>
 
@@ -141,9 +105,8 @@
     // CSV data
     const csvData = [{"Area": 1, "jakaja": "R\u00e4ty Virpi /KlaKo"}, {"Area": 2, "jakaja": "Takalo-Eskola Tarleena /KlaKo"}, {"Area": 3, "jakaja": "Not assigned"}, {"Area": 4, "jakaja": "Tarikka Visa /KlaKo"}, {"Area": 5, "jakaja": "Lompolo Kirsi /KlaKo"}, {"Area": 6, "jakaja": "Mattila Riina /KlaKo"}, {"Area": 7, "jakaja": "Mattila Riina /KlaKo"}, {"Area": 8, "jakaja": "Not assigned"}, {"Area": 9, "jakaja": "Lompolo Kirsi /KlaKo"}, {"Area": 10, "jakaja": "Winha-J\u00e4rvinen Merja /Klako"}, {"Area": 11, "jakaja": "Winha-J\u00e4rvinen Merja /Klako"}, {"Area": 12, "jakaja": "Not assigned"}, {"Area": 13, "jakaja": "Malkam\u00e4ki Jussi /KoNu"}, {"Area": 14, "jakaja": "Malkam\u00e4ki Jussi /KoNu"}, {"Area": 15, "jakaja": "Malkam\u00e4ki Jussi /KoNu"}, {"Area": 16, "jakaja": "Not assigned"}, {"Area": 17, "jakaja": "Not assigned"}, {"Area": 18, "jakaja": "Not assigned"}, {"Area": 19, "jakaja": "Not assigned"}, {"Area": 23, "jakaja": "Not assigned"}, {"Area": 24, "jakaja": "Not assigned"}, {"Area": 25, "jakaja": "Not assigned"}, {"Area": 26, "jakaja": "Not assigned"}, {"Area": 27, "jakaja": "Not assigned"}, {"Area": 30, "jakaja": "Not assigned"}, {"Area": 31, "jakaja": "Not assigned"}, {"Area": 32, "jakaja": "Not assigned"}, {"Area": 33, "jakaja": "Not assigned"}, {"Area": 34, "jakaja": "Not assigned"}, {"Area": 36, "jakaja": "Not assigned"}, {"Area": 37, "jakaja": "Not assigned"}, {"Area": 38, "jakaja": "Not assigned"}, {"Area": 39, "jakaja": "Not assigned"}, {"Area": 40, "jakaja": "Malkam\u00e4ki Jussi /KoNu"}, {"Area": 41, "jakaja": "Not assigned"}, {"Area": 42, "jakaja": "Not assigned"}, {"Area": 43, "jakaja": "Not assigned"}, {"Area": 44, "jakaja": "Not assigned"}, {"Area": 45, "jakaja": "Not assigned"}, {"Area": 46, "jakaja": "Not assigned"}, {"Area": 47, "jakaja": "Malkam\u00e4ki Jussi /KoNu"}, {"Area": 48, "jakaja": "Not assigned"}, {"Area": 51, "jakaja": "Not assigned"}, {"Area": 54, "jakaja": "Not assigned"}, {"Area": 55, "jakaja": "Not assigned"}, {"Area": 60, "jakaja": "Perki\u00f6 Pepe /Klako"}, {"Area": 61, "jakaja": "Not assigned"}, {"Area": 62, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 63, "jakaja": "Not assigned"}, {"Area": 64, "jakaja": "Not assigned"}, {"Area": 65, "jakaja": "Not assigned"}, {"Area": 66, "jakaja": "Not assigned"}, {"Area": 67, "jakaja": "Not assigned"}, {"Area": 68, "jakaja": "Perki\u00f6 Pepe /Klako"}, {"Area": 69, "jakaja": "Not assigned"}, {"Area": 70, "jakaja": "Not assigned"}, {"Area": 71, "jakaja": "Not assigned"}, {"Area": 72, "jakaja": "Perki\u00f6 Pepe /Klako"}, {"Area": 73, "jakaja": "Not assigned"}, {"Area": 74, "jakaja": "Not assigned"}, {"Area": 75, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 76, "jakaja": "Not assigned"}, {"Area": 77, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 78, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 79, "jakaja": "Not assigned"}, {"Area": 80, "jakaja": "Not assigned"}, {"Area": 81, "jakaja": "Perki\u00f6 Pepe /Klako"}, {"Area": 82, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 83, "jakaja": "Not assigned"}, {"Area": 85, "jakaja": "Not assigned"}, {"Area": 86, "jakaja": "Not assigned"}, {"Area": 87, "jakaja": "Not assigned"}, {"Area": 88, "jakaja": "Mattila Riina /KlaKo"}, {"Area": 89, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 90, "jakaja": "Not assigned"}, {"Area": 91, "jakaja": "Mattila Riina /KlaKo"}, {"Area": 92, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 93, "jakaja": "Not assigned"}, {"Area": 94, "jakaja": "Mattila Riina /KlaKo"}, {"Area": 95, "jakaja": "Suomi Joona /KlaKo"}, {"Area": 96, "jakaja": "Not assigned"}, {"Area": 97, "jakaja": "Not assigned"}, {"Area": 98, "jakaja": "Not assigned"}, {"Area": 99, "jakaja": "Tarikka Visa /KlaKo"}, {"Area": 100, "jakaja": "Not assigned"}, {"Area": 101, "jakaja": "Tarikka Visa /KlaKo"}, {"Area": 102, "jakaja": "Not assigned"}, {"Area": 104, "jakaja": "Not assigned"}, {"Area": 105, "jakaja": "Not assigned"}, {"Area": 106, "jakaja": "Tarikka Visa /KlaKo"}, {"Area": 107, "jakaja": "Not assigned"}, {"Area": 109, "jakaja": "Not assigned"}, {"Area": 111, "jakaja": "Not assigned"}, {"Area": 113, "jakaja": "Not assigned"}];
 
-    // Auto-refresh interval (in milliseconds) - default 1 hour
-    let autoRefreshInterval = 60 * 60 * 1000; 
-    let autoRefreshTimer = null;
+    // Auto-refresh interval (in milliseconds) - 1 hour
+    const autoRefreshInterval = 60 * 60 * 1000; 
 
     // Initialize map centered on Helsinki
     const map = L.map('map').setView([60.192059, 24.945831], 11);
@@ -219,7 +182,7 @@
           return {
             color: colorMap[jakaja] || "#000000",
             weight: 2,
-            fillOpacity: 0.4,
+            fillOpacity: 0.4, // Reduced opacity as requested
             fillColor: colorMap[jakaja] || "#000000"
           };
         },
@@ -239,13 +202,6 @@
 
       // Update the legend
       updateLegend(colorMap);
-
-      const now = new Date().toLocaleString();
-      document.getElementById('data-source').innerHTML = 
-        `Data updated: <br>${now}`;
-
-      // Reset auto-refresh timer if enabled
-      setupAutoRefresh();
     }
 
     // Add a legend to the map
@@ -274,9 +230,10 @@
       });
 
       sortedKeys.forEach(function(name) {
+        if (name === "Not assigned") return; // Skip "Not assigned" to save space
         const color = colorMap[name];
         html += 
-          `<div class="legend-item"><span style="background:${color}; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>` +
+          `<div class="legend-item"><span style="background:${color}; width:10px; height:10px; display:inline-block; margin-right:2px;"></span>` +
           `${name}</div>`;
       });
 
@@ -306,9 +263,9 @@
               window.locationMarker = L.marker([lat, lng], {
                 icon: L.divIcon({
                   className: 'location-pulse',
-                  html: '<div style="background-color: rgba(66, 135, 245, 0.7); border-radius: 50%; width: 16px; height: 16px; box-shadow: 0 0 0 rgba(66, 135, 245, 0.7); animation: pulse 1.5s infinite;"></div>',
-                  iconSize: [16, 16],
-                  iconAnchor: [8, 8]
+                  html: '<div style="background-color: rgba(66, 135, 245, 0.7); border-radius: 50%; width: 12px; height: 12px; box-shadow: 0 0 0 rgba(66, 135, 245, 0.7); animation: pulse 1.5s infinite;"></div>',
+                  iconSize: [12, 12],
+                  iconAnchor: [6, 6]
                 })
               }).addTo(map);
 
@@ -319,20 +276,17 @@
                 style.innerHTML = `
                   @keyframes pulse {
                     0% { box-shadow: 0 0 0 0 rgba(66, 135, 245, 0.7); }
-                    70% { box-shadow: 0 0 0 10px rgba(66, 135, 245, 0); }
+                    70% { box-shadow: 0 0 0 8px rgba(66, 135, 245, 0); }
                     100% { box-shadow: 0 0 0 0 rgba(66, 135, 245, 0); }
                   }
                 `;
                 document.head.appendChild(style);
               }
-
-              window.locationMarker.bindPopup("You are here").openPopup();
             }
 
             // Show indicator briefly
             locationIndicator.style.display = 'block';
-            locationIndicator.textContent = `Location found: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-            setTimeout(() => { locationIndicator.style.display = 'none'; }, 3000);
+            setTimeout(() => { locationIndicator.style.display = 'none'; }, 2000);
           },
           function(error) {
             console.warn("Geolocation error:", error.message);
@@ -347,39 +301,11 @@
       }
     }
 
-    // Setup auto-refresh functionality
-    function setupAutoRefresh() {
-      // Clear any existing timer
-      if (autoRefreshTimer) {
-        clearTimeout(autoRefreshTimer);
-        autoRefreshTimer = null;
-      }
-
-      // If auto-refresh is enabled, set up a new timer
-      const autoRefreshCheckbox = document.getElementById('auto-refresh');
-      if (autoRefreshCheckbox.checked) {
-        autoRefreshTimer = setTimeout(async function() {
-          if (window.location.protocol !== 'file:') {
-            // Only refresh if we're not on a local file system
-            await refreshData();
-          }
-          // Reset the timer
-          setupAutoRefresh();
-        }, autoRefreshInterval);
-      }
-    }
-
     // Function to refresh data
     async function refreshData() {
-      const refreshButton = document.getElementById('refresh-button');
-      refreshButton.disabled = true;
-      refreshButton.textContent = 'Refreshing...';
-
       if (window.location.protocol === 'file:') {
-        // When running locally, just show a message
-        alert("When viewing from a web server, this button will fetch the latest CSV data");
-        refreshButton.disabled = false;
-        refreshButton.textContent = 'Refresh Data';
+        // When running locally, use embedded data
+        processCSVDataAndUpdateMap(csvData);
         return;
       }
 
@@ -402,17 +328,17 @@
         } else {
           // If fetch fails, update with embedded data
           processCSVDataAndUpdateMap(csvData);
-          document.getElementById('data-source').innerHTML = 
-            `Data source: Embedded<br>(CSV not found)`;
         }
       } catch (err) {
         console.warn("Error refreshing data:", err);
         // Fall back to embedded data
         processCSVDataAndUpdateMap(csvData);
-      } finally {
-        refreshButton.disabled = false;
-        refreshButton.textContent = 'Refresh Data';
       }
+    }
+
+    // Setup auto-refresh functionality
+    function setupAutoRefresh() {
+      setInterval(refreshData, autoRefreshInterval);
     }
 
     // Try to load CSV from a file if on a web server, otherwise use embedded data
@@ -445,15 +371,10 @@
           console.warn("Could not load CSV file:", err);
         }
       }
-    }
 
-    // Add refresh button functionality
-    document.getElementById('refresh-button').addEventListener('click', refreshData);
-
-    // Add auto-refresh checkbox functionality
-    document.getElementById('auto-refresh').addEventListener('change', function() {
+      // Set up automatic refresh
       setupAutoRefresh();
-    });
+    }
 
     // Initialize geolocation
     setupGeolocation();
